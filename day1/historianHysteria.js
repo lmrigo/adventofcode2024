@@ -38,10 +38,32 @@ var part1 = function() {
 var part2 = function () {
 
   for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = $.map(numberStrings, (val => {return Number(val)}))
+    const listA = []
+    const listB = []
+    const count = {}
+    const rows = input[i].split(/\n/)
+    rows.forEach((row) => {
+      const numbers = row.split(/\s+/)
+      const numberA = Number(numbers[0])
+      const numberB = Number(numbers[1])
+      if (count[numberA] === undefined) {
+        count[numberA] = {a: 0, b: 0}
+      }
+      count[numberA].a++
+      if (count[numberB] === undefined) {
+        count[numberB] = {a: 0, b: 0}
+      }
+      count[numberB].b++
+      listA.push(numberA)
+      listB.push(numberB)
+    })
+    let similarityScore = 0
+    listA.forEach((numberA) => {
+      similarityScore += numberA * count[numberA].b
+    })
 
-    const result = 0
+
+    const result = similarityScore
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
