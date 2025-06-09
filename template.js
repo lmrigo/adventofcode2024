@@ -5,9 +5,9 @@ var input = [
 
 var part1 = function() {
 
-  for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = numberStrings.map((val => {return Number(val)}))
+  for (let i = 0; i < input.length; i++) {
+    const numberStrings = input[i].split(/\s+/)
+    const numbers = numberStrings.map((val => {return Number(val)}))
 
     const result = 0
     // console.log(result)
@@ -20,9 +20,9 @@ var part1 = function() {
 
 var part2 = function () {
 
-  for (var i = 0; i < input.length; i++) {
-    var numberStrings = input[i].split(/\s+/)
-    var numbers = numberStrings.map((val => {return Number(val)}))
+  for (let i = 0; i < input.length; i++) {
+    const numberStrings = input[i].split(/\s+/)
+    const numbers = numberStrings.map((val => {return Number(val)}))
 
     const result = 0
     // console.log(result)
