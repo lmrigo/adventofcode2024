@@ -45,7 +45,6 @@ var part1 = function() {
   }
 }
 
-
 function topLeftXmas(i,j) {
   if (i < 3 || j < 3) {
     return false
@@ -96,18 +95,49 @@ function leftXmas(i,j) {
 }
 
 var part2 = function () {
-
   for (let i = 0; i < input.length; i++) {
-    const numberStrings = input[i].split(/\s+/)
-    const numbers = numberStrings.map((val => {return Number(val)}))
+    grid = input[i].split(/\s+/).map(row => row.split(''))
 
-    const result = 0
+// M_S M_M S_M S_S
+// _A_ _A_ _A_ _A_
+// M_S S_S S_M M_M
+    let masXCount = 0
+    for (let i = 0; i < grid.length; i++) {
+      for (let j = 0; j < grid[i].length; j++) {
+        const cell = grid[i][j]
+        if (i < 1 || j < 1 || i > grid.length -2 || j > grid[i].length - 2) {
+          continue // skip edges
+        }
+        if (cell === 'A') {
+          if (topMasX(i,j)) masXCount++
+          if (rightMasX(i,j)) masXCount++
+          if (bottomMasX(i,j)) masXCount++
+          if (leftMasX(i,j)) masXCount++
+        }
+      }
+    }
+
+    const result = masXCount
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
       .append(result)
       .append('<br>')
   }
+}
+
+
+function topMasX(i,j) { // MM A SS
+  return grid[i-1][j-1] === 'M' && grid[i-1][j+1] === 'M' && grid[i+1][j-1] === 'S' && grid[i+1][j+1] === 'S'
+}
+function rightMasX(i,j) { // SM A SM
+  return grid[i-1][j-1] === 'S' && grid[i-1][j+1] === 'M' && grid[i+1][j-1] === 'S' && grid[i+1][j+1] === 'M'
+}
+function bottomMasX(i,j) { // SS A MM
+  return grid[i-1][j-1] === 'S' && grid[i-1][j+1] === 'S' && grid[i+1][j-1] === 'M' && grid[i+1][j+1] === 'M'
+}
+function leftMasX(i,j) { // MS A MS
+  return grid[i-1][j-1] === 'M' && grid[i-1][j+1] === 'S' && grid[i+1][j-1] === 'M' && grid[i+1][j+1] === 'S'
 }
 
 $(function (){
