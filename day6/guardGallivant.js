@@ -64,10 +64,73 @@ var part1 = function() {
 var part2 = function () {
 
   for (let i = 0; i < input.length; i++) {
-    const numberStrings = input[i].split(/\s+/)
-    const numbers = numberStrings.map((val => {return Number(val)}))
+    const grid = input[i].split(/\n/).map(line => line.split(''))
+    const guard = {x: 0, y: 0, direction: '^'}
+    for (let y = 0; y < grid.length; y++) {
+      let foundGuard = false
+      for (let x = 0; x < grid[y].length; x++) {
+        if (grid[y][x] === '^') {
+          guard.x = x
+          guard.y = y
+          break
+        }
+      }
+      if (foundGuard) {
+        break
+      }
+    }
+    const originalGuard = {...guard} // save original position and direction
+    const originalGrid = grid.map(row => row.slice()) // save original grid state
+    // console.log(grid)
+    // console.log(guard)
+    let exit = false
+    while (!exit) {
+      grid[guard.y][guard.x] = 'X' // mark as visited
+      if (canWalk(guard, grid)) {
+        walk(guard, grid)
+      } else {
+        turnRight(guard, grid)
+      }
+      if (outOfBounds(guard, grid)) {
+        exit = true
+      }
+    }
+    const possibleObstructions = []
+    for (let y = 0; y < grid.length; y++) {
+      for (let x = 0; x < grid[y].length; x++) {
+        if (grid[y][x] === 'X') {
+          possibleObstructions.push({x: x, y: y})
+        }
+      }
+    }
+    // console.log(possibleObstructions)
+    let obstructionCount = 0
+    possibleObstructions.forEach((obst) => {
+      const obGuard = {...originalGuard}
+      const obGrid = originalGrid.map(row => row.slice())
+      obGrid[obst.y][obst.x] = '#' // place obstruction
 
-    const result = 0
+      let exit = false
+      let loop = false
+      while (!exit && !loop) {
+        obGrid[obGuard.y][obGuard.x] += obGuard.direction // mark as visited
+        if (canWalk(obGuard, obGrid)) {
+          walk(obGuard, obGrid)
+        } else {
+          turnRight(obGuard, obGrid)
+        }
+        if (outOfBounds(obGuard, obGrid)) {
+          exit = true
+        } else if (isRepeated(obGuard, obGrid)) {
+          loop = true
+        }
+      }
+      if (loop) {
+        obstructionCount++
+      }
+    })
+
+    const result = obstructionCount
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
@@ -110,6 +173,9 @@ function canWalk(guard, grid) {
     case '<':
       return grid[guard.y][guard.x - 1] !== '#'
   }
+}
+function isRepeated(guard, grid) {
+  return grid[guard.y][guard.x].includes(guard.direction)
 }
 
 $(function (){
