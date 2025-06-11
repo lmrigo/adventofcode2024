@@ -71,10 +71,63 @@ var part1 = function() {
 var part2 = function () {
 
   for (let i = 0; i < input.length; i++) {
-    const numberStrings = input[i].split(/\s+/)
-    const numbers = numberStrings.map((val => {return Number(val)}))
+    const numberStrings = input[i].split(/\n/)
+    const equations = numberStrings.map((val => val.split(/\:?\s+/).map(n => Number(n))))
+    // console.log(equations)
+    let total = Number(0)
+    equations.forEach(eq => {
+      const [result, ...numbers] = eq
+      let tests = [{n:numbers[0],str:''+numbers[0]}]
+      let valid = false
+      for (let n = 1; n < numbers.length; n++) {
+        if (n < numbers.length - 1) {
+          let newTests = []
+          while (tests.length > 0) {
+            let t = tests.shift()
+            const sumT = t.n + numbers[n]
+            if (sumT <= result) { // <= because last element could be *1
+              newTests.push({n:sumT,str:t.str+'+'+numbers[n]})
+            }
+            const productT = t.n * numbers[n]
+            if (productT <= result) { // <= because last element could be *1
+              newTests.push({n:productT,str:t.str+'*'+numbers[n]})
+            }
+            const concatT = Number(t.n +''+numbers[n])
+            if (concatT <= result) { // <= because last element could be *1
+              newTests.push({n:concatT,str:t.str+'||'+numbers[n]})
+            }
+          }
+          tests = newTests
+        } else {
+          while (tests.length > 0 && !valid) {
+            let t = tests.shift()
+            const sumT = t.n + numbers[n]
+            if (sumT === result) {
+              total += result
+              // console.log(t.str+'+'+numbers[n])
+              valid = true
+              break
+            }
+            const productT = t.n * numbers[n]
+            if (productT === result) {
+              total += result
+              // console.log(t.str+'*'+numbers[n])
+              valid = true
+              break
+            }
+            const concatT = Number(t.n +''+numbers[n])
+            if (concatT === result) {
+              total += result
+              // console.log(t.str+'*'+numbers[n])
+              valid = true
+              break
+            }
+          }
+        }
+      }
+    })
 
-    const result = 0
+    const result = total
     // console.log(result)
     $('#part2').append(input[i])
       .append('<br>&emsp;')
